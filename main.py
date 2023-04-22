@@ -3,7 +3,14 @@ import json
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from discord_webhook import DiscordWebhook
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+webhook = DiscordWebhook(url=os.getenv('webhook_url'), content='Webhook Message')
+response = webhook.execute()
 
 def main(json_file: str) -> None:
     with open(json_file) as f:
@@ -40,6 +47,7 @@ def parse(soup: BeautifulSoup) -> list[list[str]]:
         link = item.select_one(".s-item__link")['href']
         result.append([title, price, link])
     return result
+
 
 
 if __name__ == '__main__':
