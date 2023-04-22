@@ -1,0 +1,13 @@
+{
+    "queries": [
+      {
+        "keyword": "iphone 12",
+        "max_price": 1000
+      },
+      {
+        "keyword": "macbook air",
+        "max_price": 1500
+      }
+    ]
+  }
+  
