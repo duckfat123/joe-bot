@@ -10,9 +10,6 @@ import time
 
 load_dotenv()
 
-# webhook = DiscordWebhook(url=os.getenv('webhook_url'), content='Webhook Message')
-# response = webhook.execute()
-
 def main(json_file: str) -> None:
     with open(json_file) as f:
         data = json.load(f)
@@ -46,7 +43,7 @@ def alert_discord():
                 webhook = DiscordWebhook(url=os.getenv('webhook_url'), content=url)
                 response = webhook.execute()
                 print(response)
-                time.sleep(2)
+                time.sleep(1.5)
 
 
 def make_soup(url: str) -> BeautifulSoup:
