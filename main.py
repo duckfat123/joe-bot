@@ -6,16 +6,21 @@ from bs4 import BeautifulSoup
 from discord_webhook import DiscordWebhook
 from dotenv import load_dotenv
 import os
+import time
 
 load_dotenv()
 
-webhook = DiscordWebhook(url=os.getenv('webhook_url'), content='Webhook Message')
-response = webhook.execute()
+# webhook = DiscordWebhook(url=os.getenv('webhook_url'), content='Webhook Message')
+# response = webhook.execute()
 
 def main(json_file: str) -> None:
     with open(json_file) as f:
         data = json.load(f)
+    while True:
+        search_ebay(data=data)
+        time.sleep(60)
 
+def search_ebay(data):
     results = []
     for query in data["queries"]:
         url = f"https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313&_nkw={query['keyword']}&_sacat=0"
@@ -27,7 +32,21 @@ def main(json_file: str) -> None:
 
     df_all = pd.concat(results)
     df_all.to_csv("output.csv", sep="\t", index=False)
+    alert_discord()
     print("Done!")
+
+def alert_discord():
+    # reads output.csv and sends discord webhook
+    urls_sent = []
+    with open('output.csv', 'r') as file:
+        for line in file:
+            url = line.strip().split("\t")[2]
+            if url not in urls_sent:
+                urls_sent.append(url)
+                webhook = DiscordWebhook(url=os.getenv('webhook_url'), content=url)
+                response = webhook.execute()
+                print(response)
+                time.sleep(2)
 
 
 def make_soup(url: str) -> BeautifulSoup:
